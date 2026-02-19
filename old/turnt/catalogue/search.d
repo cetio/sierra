@@ -8,12 +8,12 @@ import gtk.popover;
 import gtk.search_entry;
 import gtk.types : Align, Orientation;
 
-import turnt.catalogue.view : CatalogueView, SortMode;
+import turnt.catalogue.view : CatalogView, SortMode;
 
 class SearchWidget : Box
 {
     SearchEntry searchEntry;
-    CatalogueView catalogue;
+    CatalogView catalogue;
     Popover sortPopover;
     Popover filterPopover;
 

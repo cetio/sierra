@@ -12,14 +12,14 @@ import gtk.label : Label;
 import gtk.types : Align, Orientation;
 
 import turnt.catalogue.card : CardWidget;
-import turnt.catalogue.view : CatalogueView, BrowseView, clearBox;
+import turnt.catalogue.view : CatalogView, BrowseView, clearBox;
 import turnt.playlist;
 import turnt.vinyl : Vinyl, drawVinylFolder;
 import turnt.window;
 
-import mutagen.catalogue : Artist, Album, Track, musicDir;
+import mutagen.catalog : Artist, Album, Track, musicDir;
 
-void showArtists(CatalogueView cv)
+void showArtists(CatalogView cv)
 {
     cv.currentView = BrowseView.Artists;
     cv.stickyArtist = "";
@@ -82,7 +82,7 @@ void showArtists(CatalogueView cv)
     cv.ensureCards();
 }
 
-void showAlbums(CatalogueView cv, string artist)
+void showAlbums(CatalogView cv, string artist)
 {
     cv.currentView = BrowseView.Albums;
     cv.stickyArtist = artist;
@@ -124,7 +124,7 @@ void showAlbums(CatalogueView cv, string artist)
     cv.ensureCards();
 }
 
-void showTracks(CatalogueView cv, string artist, string album)
+void showTracks(CatalogView cv, string artist, string album)
 {
     cv.currentView = BrowseView.Tracks;
     cv.stickyAlbum = album;
@@ -186,7 +186,7 @@ void showTracks(CatalogueView cv, string artist, string album)
     cv.ensureCards();
 }
 
-void showPlaylist(CatalogueView cv, int idx)
+void showPlaylist(CatalogView cv, int idx)
 {
     if (idx < 0 || idx >= cast(int)cv.playlist.playlists.length)
         return;

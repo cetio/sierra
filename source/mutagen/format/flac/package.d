@@ -1,6 +1,7 @@
-module mutagen.flac;
+module mutagen.format.flac;
 
-public import mutagen.flac.vorbis;
+public import mutagen.format.flac.vorbis;
+public import mutagen.format.flac.picture;
 
 import std.stdio : File, SEEK_CUR;
 import std.variant : Variant;
@@ -14,49 +15,6 @@ enum HeaderType : ubyte
     VorbisComment,
     CueSheet,
     Picture
-}
-
-private uint readBe32(File file)
-{
-    ubyte[4] bytes = file.rawRead(new ubyte[4]);
-    return (cast(uint)bytes[0] << 24)
-        | (cast(uint)bytes[1] << 16)
-        | (cast(uint)bytes[2] << 8)
-        | cast(uint)bytes[3];
-}
-
-struct Picture
-{
-    uint pictureType;
-    string mime;
-    string description;
-    uint width;
-    uint height;
-    uint depth;
-    uint colors;
-    ubyte[] data;
-
-    this(File file)
-    {
-        pictureType = readBe32(file);
-
-        uint mimeLen = readBe32(file);
-        if (mimeLen > 0)
-            mime = cast(string)file.rawRead(new char[](mimeLen));
-
-        uint descLen = readBe32(file);
-        if (descLen > 0)
-            description = cast(string)file.rawRead(new char[](descLen));
-
-        width = readBe32(file);
-        height = readBe32(file);
-        depth = readBe32(file);
-        colors = readBe32(file);
-
-        uint imageLen = readBe32(file);
-        if (imageLen > 0)
-            data = file.rawRead(new ubyte[](imageLen));
-    }
 }
 
 struct Header

@@ -9,9 +9,9 @@ import gtk.event_controller_scroll;
 import gtk.gesture_drag;
 import gtk.types : EventControllerScrollFlags;
 
-import turnt.catalogue.view : CatalogueView;
+import turnt.catalogue.view : CatalogView;
 
-void attachControllers(CatalogueView view)
+void attachControllers(CatalogView view)
 {
     ScrollState state = new ScrollState(view);
 
@@ -35,7 +35,7 @@ void attachControllers(CatalogueView view)
 
 private class ScrollState
 {
-    CatalogueView view;
+    CatalogView view;
 
     double dragStartScroll = 0;
     double velocity = 0;
@@ -46,7 +46,7 @@ private class ScrollState
 
     double cursorY = 0;
 
-    this(CatalogueView view)
+    this(CatalogView view)
     {
         this.view = view;
     }

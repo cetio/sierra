@@ -5,11 +5,9 @@ import std.path : extension;
 import std.stdio : File;
 import std.string : toLower, toUpper;
 
-import mutagen.flac : FLAC, HeaderType, Picture;
-import mutagen.flac.vorbis : Vorbis;
-import mutagen.mp3 : MP3, readId3PlayCount, writeId3PlayCount;
-import mutagen.mp4 : MP4, readMp4Tag, writeMp4Tag;
-import mutagen.opus : Opus, readOpusTags;
+import mutagen.format.flac;
+import mutagen.format.mp3;
+import mutagen.format.mp4;
 
 enum AudioFormat
 {
@@ -20,7 +18,7 @@ enum AudioFormat
     unknown
 }
 
-final class Mutagen
+final class Audio
 {
 public:
     string path;
@@ -100,7 +98,7 @@ public:
         {
             try
             {
-                return value.to!int;
+                return (*value).to!int;
             }
             catch (Exception)
             {
@@ -113,11 +111,6 @@ public:
     void setPlayCount(int count)
     {
         tags["PLAY_COUNT"] = count.to!string;
-
-        if (format == AudioFormat.mp3)
-            writeId3PlayCount(path, count);
-        else if (format == AudioFormat.mp4)
-            writeMp4Tag(path, "PLAY_COUNT", count.to!string);
     }
 
 private:
@@ -134,7 +127,8 @@ private:
                     if (vorbis !is null)
                     {
                         foreach (k, v; vorbis.tags)
-                            tags[k.toUpper()] = v;
+                        if (v.length > 0)
+                            tags[k] = v[0];
                     }
                 }
                 else if (header.type == HeaderType.Picture && image.length == 0)
@@ -155,38 +149,33 @@ private:
         try
         {
             MP3 mp3 = new MP3(File(path, "rb"));
-            foreach (k, v; mp3.tags)
-                tags[k.toUpper()] = v;
+            tags["TITLE"] = mp3["TITLE"];
+            tags["ARTIST"] = mp3["ARTIST"];
+            tags["ALBUM"] = mp3["ALBUM"];
+            tags["TRACKNUMBER"] = mp3["TRACKNUMBER"];
+            tags["PLAY_COUNT"] = mp3["PLAY_COUNT"];
             if (mp3.image.length > 0)
                 image = mp3.image.dup;
         }
         catch (Exception)
         {
         }
-
-        if (!("PLAY_COUNT" in tags))
-            tags["PLAY_COUNT"] = readId3PlayCount(path).to!string;
     }
 
     void parseMp4()
     {
         try
         {
-            MP4 mp4 = new MP4(path);
-            foreach (k, v; mp4.tags)
-                tags[k.toUpper()] = v;
+            MP4 mp4 = new MP4(File(path, "rb"));
+            tags["TITLE"] = mp4["TITLE"];
+            tags["ARTIST"] = mp4["ARTIST"];
+            tags["ALBUM"] = mp4["ALBUM"];
+            tags["TRACKNUMBER"] = mp4["TRACKNUMBER"];
             if (mp4.image.length > 0)
                 image = mp4.image.dup;
         }
         catch (Exception)
         {
-        }
-
-        if (!("PLAY_COUNT" in tags))
-        {
-            string value = readMp4Tag(path, "PLAY_COUNT");
-            if (value.length > 0)
-                tags["PLAY_COUNT"] = value;
         }
     }
 

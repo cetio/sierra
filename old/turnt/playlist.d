@@ -25,7 +25,7 @@ import gtk.overlay;
 import gtk.types : Align, Orientation;
 import gtk.widget;
 
-import mutagen.catalogue : musicDir, collectAudio, findAlbums;
+import mutagen.catalog : musicDir, collectAudio, findAlbums;
 import turnt.catalogue.card : CardWidget;
 import turnt.vinyl : Vinyl, drawVinylFolder;
 import turnt.window;

@@ -13,7 +13,7 @@ import turnt.catalogue.browse;
 import turnt.playlist : PlaylistState;
 import turnt.vinyl : Vinyl;
 
-import mutagen.catalogue : Artist, collectAll, musicDir;
+import mutagen.catalog : Artist, collectAll, musicDir;
 
 enum BrowseView
 {
@@ -29,7 +29,7 @@ enum SortMode
     Plays
 }
 
-class CatalogueView : Box
+class CatalogView : Box
 {
 public:
     BrowseView currentView = BrowseView.Artists;
