@@ -1,6 +1,7 @@
 module mutagen.format.mp4;
 
 import mutagen.format.mp4.atom;
+import mutagen.catalog.image;
 import std.stdio;
 import std.string;
 import std.bitmanip;
@@ -9,7 +10,6 @@ class MP4
 {
     File file;
     Atom[] atoms;
-    ubyte[] imageData;
 
     this(File file)
     {
@@ -59,15 +59,6 @@ class MP4
                 ubyte[] payload = file.rawRead(new ubyte[](payloadSize));
                 Atom atom = Atom(header ~ payload);
                 atoms ~= atom;
-
-                if (atomType == "covr" && imageData.length == 0)
-                {
-                    if (atom.data.type == typeid(CoverAtom))
-                    {
-                        CoverAtom covr = atom.data.get!CoverAtom;
-                        imageData = covr.image;
-                    }
-                }
             }
 
             file.seek(atomEnd, SEEK_SET);
@@ -149,8 +140,18 @@ class MP4
         return val;
     }
 
-    ubyte[] image() const
+    Image image() const
     {
-        return imageData.dup;
+        foreach (atom; atoms)
+        {
+            if (atom.data.type == typeid(CoverAtom))
+            {
+                return Image.fromMime(
+                    atom.data.get!CoverAtom.image.dup, 
+                    atom.data.get!CoverAtom.mime
+                );
+            }
+        }
+        return Image.init;
     }
 }

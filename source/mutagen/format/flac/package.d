@@ -1,6 +1,7 @@
 module mutagen.format.flac;
 
 import mutagen.format.flac.block;
+import mutagen.catalog.image;
 import std.stdio;
 import std.string;
 import std.variant;
@@ -76,16 +77,18 @@ class FLAC
         return val;
     }
 
-    ubyte[] image() const
+    Image image() const
     {
         foreach (ref header; headers)
         {
             if (header.data.type == typeid(PictureBlock))
             {
-                const(PictureBlock) p = header.data.get!PictureBlock;
-                return p.data.dup;
+                return Image.fromMime(
+                    header.data.get!PictureBlock.data.dup,
+                    header.data.get!PictureBlock.mime
+                );
             }
         }
-        return [];
+        return Image.init;
     }
 }

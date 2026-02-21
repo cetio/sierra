@@ -1,6 +1,7 @@
 module mutagen.format.mp3;
 
 import mutagen.format.mp3.frame;
+import mutagen.catalog.image;
 import std.stdio;
 import std.conv;
 import std.string;
@@ -9,7 +10,6 @@ class MP3
 {
     File file;
     Frame[] frames;
-    ubyte[] imageData;
 
     this(File file)
     {
@@ -42,15 +42,6 @@ class MP3
             if (!valid)
                 break;
             frames ~= frame;
-
-            if (imageData.length == 0)
-            {
-                if (frame.data.type == typeid(ApicFrame))
-                {
-                    ApicFrame apic = frame.data.get!ApicFrame;
-                    imageData = apic.image;
-                }
-            }
         }
 
         this.file.close();
@@ -146,8 +137,18 @@ class MP3
         return val;
     }
 
-    ubyte[] image() const
+    Image image() const
     {
-        return imageData.dup;
+        foreach (frame; frames)
+        {
+            if (frame.data.type == typeid(ApicFrame))
+            {
+                return Image.fromMime(
+                    frame.data.get!ApicFrame.image.dup,
+                    frame.data.get!ApicFrame.mime
+                );
+            }
+        }
+        return Image.init;
     }
 }

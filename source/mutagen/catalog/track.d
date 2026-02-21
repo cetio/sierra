@@ -1,20 +1,21 @@
 module mutagen.catalog.track;
 
-import std.conv : to;
-import std.file : SpanMode, dirEntries, exists, isDir, isFile, read;
-import std.path : baseName, dirName, extension;
+import std.conv;
 import std.stdio : File;
-import std.string : indexOf, strip, toLower;
+import std.file;
+import std.path : extension, dirName;
+import std.string;
 
 import mutagen.audio;
 import mutagen.catalog.album;
+import mutagen.catalog.image;
 
 class Track
 {
 public:
     Audio audio;
     Album album;
-    string title;
+    string name;
     int number;
 
     this(Audio audio)
@@ -22,7 +23,7 @@ public:
         this.audio = audio;
 
         string[] titles = audio["TITLE"];
-        this.title = titles.length > 0 ? titles[0] : "";
+        this.name = titles.length > 0 ? titles[0] : null;
 
         string str = audio["TRACKNUMBER"].length > 0 ? audio["TRACKNUMBER"][0] : null;
         if (str !is null)
@@ -46,14 +47,15 @@ public:
         return ret;
     }
 
-    ubyte[] image()
+    Image image()
     {
-        if (audio.image != null)
-            return audio.image;
+        Image img = audio.image;
+        if (img.hasData())
+            return img;
 
         string dir = dirName(audio.file.name);
-        if (dir.length == 0 || !exists(dir) || !isDir(dir))
-            return null;
+        if (!exists(dir) || !isDir(dir))
+            return img;
 
         try
         {
@@ -64,11 +66,12 @@ public:
 
                 string ext = extension(entry.name).toLower();
                 if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
-                    return cast(ubyte[])read(entry.name);
+                    return Image.fromData(cast(ubyte[])read(entry.name));
             }
         }
         catch (Exception) { }
-        return null;
+
+        return img;
     }
 
     int getPlayCount()

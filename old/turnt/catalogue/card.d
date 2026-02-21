@@ -1,6 +1,6 @@
 module turnt.catalogue.card;
 
-import std.conv : to;
+import std.conv;
 import std.file : SpanMode;
 import std.path : baseName;
 import std.string : indexOf, lastIndexOf, toUpper;

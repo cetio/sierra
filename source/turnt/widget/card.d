@@ -1,6 +1,6 @@
 module turnt.widget.card;
 
-import std.conv : to;
+import std.conv;
 
 import gtk.box;
 import gtk.label;

@@ -1,6 +1,6 @@
 module turnt.view.catalog;
 
-import std.conv : to;
+import std.conv;
 import std.string : toUpper;
 
 import gtk.adjustment;
@@ -114,7 +114,7 @@ public:
         stickyAlbum = "";
         clearBox(contentBox);
 
-        if (artist.albums.length == 0)
+        if (artist.albums == null)
         {
             Artist fresh = Artist.fromDirectory(artist.dir);
             artist.albums = fresh.albums;
@@ -136,7 +136,7 @@ public:
             Vinyl vinyl = new Vinyl(album);
             int trackCount = cast(int)album.tracks.length;
             string detail = trackCount.to!string~" track"~(trackCount != 1 ? "s" : "");
-            CardWidget card = new CardWidget(vinyl, album.title.toUpper(), detail, album.getPlayCount());
+            CardWidget card = new CardWidget(vinyl, album.name.toUpper(), detail, album.getPlayCount());
 
             GestureClick click = new GestureClick();
             click.connectReleased(((Album a, Artist ar) => delegate(int n, double x, double y) {
@@ -153,7 +153,7 @@ public:
     void showTracks(Artist artist, Album album)
     {
         currentView = BrowseView.Tracks;
-        stickyAlbum = album.title;
+        stickyAlbum = album.name;
         clearBox(contentBox);
 
         Vinyl artistVinyl = new Vinyl(artist);
@@ -165,7 +165,7 @@ public:
         Vinyl albumVinyl = new Vinyl(album);
         int trackCount = cast(int)album.tracks.length;
         string albDetail = trackCount.to!string~" track"~(trackCount != 1 ? "s" : "");
-        CardWidget albumCard = new CardWidget(albumVinyl, album.title.toUpper(), albDetail, album.getPlayCount());
+        CardWidget albumCard = new CardWidget(albumVinyl, album.name.toUpper(), albDetail, album.getPlayCount());
         makeStickyCard(albumCard, delegate void() { showAlbums(artist); });
         contentBox.append(albumCard);
 
@@ -175,7 +175,7 @@ public:
         lazyMakeCard = (int idx) {
             Track track = tracks[idx];
             Vinyl vinyl = new Vinyl(track);
-            string title = track.number.to!string~". "~track.title.toUpper();
+            string title = track.number.to!string~". "~track.name.toUpper();
             CardWidget card = new CardWidget(vinyl, title, "", track.getPlayCount(), 1, 1, "track-name");
             contentBox.append(card);
         };

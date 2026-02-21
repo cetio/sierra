@@ -76,6 +76,7 @@ struct TextFrame
 
 struct ApicFrame
 {
+    string mime;
     ubyte[] image;
 
     this(ubyte[] data)
@@ -84,14 +85,17 @@ struct ApicFrame
             return;
 
         size_t p = 1;
+        size_t mimeStart = p;
         while (p < data.length && data[p] != 0)
             p++;
         if (p >= data.length)
             return;
+        mime = cast(string)data[mimeStart..p];
         p++;
 
         if (p >= data.length)
             return;
+        ubyte pictureType = data[p];
         p++;
 
         while (p < data.length && data[p] != 0)
@@ -113,6 +117,7 @@ struct TxxxFrame
     {
         if (data.length < 2)
             return;
+            
         ubyte encoding = data[0];
         size_t p = 1;
         size_t descEnd = p;
@@ -121,6 +126,7 @@ struct TxxxFrame
         {
             while (descEnd < data.length && data[descEnd] != 0)
                 descEnd++;
+
             desc = cast(string)data[p..descEnd];
             if (descEnd + 1 < data.length)
                 value = cast(string)data[descEnd + 1..$];
@@ -136,6 +142,7 @@ struct PcntFrame
     {
         if (data.length == 0)
             return;
+
         foreach (b; data)
             count = (count << 8) | b;
     }

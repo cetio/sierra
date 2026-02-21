@@ -1,6 +1,6 @@
 module turnt.catalogue.browse;
 
-import std.conv : to;
+import std.conv;
 import std.path : buildPath;
 import std.string : indexOf, toUpper;
 

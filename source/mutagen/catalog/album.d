@@ -1,7 +1,7 @@
 module mutagen.catalog.album;
 
 import std.algorithm : sort;
-import std.conv : to;
+import std.conv;
 import std.file : SpanMode, dirEntries, exists, isDir, isFile;
 import std.path : baseName, extension;
 import std.stdio : File;
@@ -9,18 +9,19 @@ import std.string : indexOf, strip, toLower;
 
 import mutagen.audio;
 import mutagen.catalog.artist;
+import mutagen.catalog.image;
 import mutagen.catalog.track;
 
 class Album
 {
 public:
-    string title;
+    string name;
     string dir;
     Track[] tracks;
     Artist artist;
 
-    ubyte[] image()
-        => tracks.length > 0 ? tracks[0].image : null;
+    Image image()
+        => tracks.length > 0 ? tracks[0].image : Image.init;
 
     int getPlayCount()
     {
@@ -34,7 +35,7 @@ public:
     {
         Album ret = new Album();
         ret.dir = path;
-        ret.title = baseName(path);
+        ret.name = baseName(path);
         ret.artist = artist;
 
         if (!exists(path) || !isDir(path))
@@ -56,11 +57,11 @@ public:
                 {
                     ret.tracks ~= track;
                     
-                    if (ret.title == baseName(path))
+                    if (ret.name == baseName(path))
                     {
                         string[] albumTags = track.audio["ALBUM"];
                         if (albumTags.length > 0)
-                            ret.title = albumTags[0];
+                            ret.name = albumTags[0];
                     }
                 }
             }

@@ -61,6 +61,7 @@ struct FreeformAtom
 struct CoverAtom
 {
     ubyte[] image;
+    string mime;
 
     this(ubyte[] data)
     {
@@ -75,6 +76,11 @@ struct CoverAtom
             string subType = cast(string)data[pos + 4..pos + 8];
             if (subType == "data" && subSize > 16)
             {
+                ubyte flags = data[pos + 11];
+                if (flags == 0x0D)
+                    mime = "image/jpeg";
+                else if (flags == 0x0E)
+                    mime = "image/png";
                 image = data[pos + 16..pos + subSize].dup;
                 break;
             }

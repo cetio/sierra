@@ -1,6 +1,6 @@
 module turnt.playlist;
 
-import std.conv : to;
+import std.conv;
 import std.file : SpanMode;
 import std.path : buildPath;
 import std.stdio : writeln;

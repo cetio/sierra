@@ -6,6 +6,7 @@ import std.string;
 import std.conv;
 import std.variant;
 
+import mutagen.catalog.image;
 import mutagen.format.flac;
 import mutagen.format.mp3;
 import mutagen.format.mp4;
@@ -87,15 +88,15 @@ struct Audio
         return val;
     }
 
-    ubyte[] image() const
+    Image image() const
     {
         if (data.type == typeid(FLAC))
-            return data.get!FLAC.image();
+            return data.get!FLAC.image;
         else if (data.type == typeid(MP3))
-            return data.get!MP3.image();
+            return data.get!MP3.image;
         else if (data.type == typeid(MP4))
-            return data.get!MP4.image();
+            return data.get!MP4.image;
 
-        return null;
+        return Image.init;
     }
 }

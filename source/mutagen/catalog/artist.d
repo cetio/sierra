@@ -4,6 +4,7 @@ import std.file : SpanMode, dirEntries, exists, isDir;
 import std.path : baseName;
 
 import mutagen.catalog.album;
+import mutagen.catalog.image;
 
 class Artist
 {
@@ -12,8 +13,8 @@ public:
     string dir;
     Album[] albums;
 
-    ubyte[] image()
-        => albums.length > 0 ? albums[0].image : null;
+    Image image()
+        => albums.length > 0 ? albums[0].image : Image.init;
 
     int getPlayCount()
     {
