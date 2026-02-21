@@ -90,20 +90,12 @@ struct Audio
     ubyte[] image() const
     {
         if (data.type == typeid(FLAC))
-        {
-            const(FLAC) flac = data.get!FLAC;
-            return flac.image();
-        }
-        if (data.type == typeid(MP3))
-        {
-            const(MP3) mp3 = data.get!MP3;
-            return mp3.image();
-        }
-        if (data.type == typeid(MP4))
-        {
-            const(MP4) mp4 = data.get!MP4;
-            return mp4.image();
-        }
-        return [];
+            return data.get!FLAC.image();
+        else if (data.type == typeid(MP3))
+            return data.get!MP3.image();
+        else if (data.type == typeid(MP4))
+            return data.get!MP4.image();
+
+        return null;
     }
 }
