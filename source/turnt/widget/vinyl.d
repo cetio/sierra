@@ -68,31 +68,6 @@ Surface pixbufToSurface(Pixbuf pb)
     return srf;
 }
 
-string toRoman(int n)
-{
-    if (n <= 0 || n > 3999)
-        return "";
-    string result;
-    immutable int[] vals =    [1000, 900, 500, 400, 100,  90,  50,  40,  10,   9,   5,   4,  1];
-    immutable string[] syms = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
-    foreach (i, v; vals)
-    {
-        while (n >= v)
-        {
-            result ~= syms[i];
-            n -= v;
-        }
-    }
-    return result;
-}
-
-enum VinylKind
-{
-    Artist,
-    Album,
-    Track
-}
-
 class Vinyl : DrawingArea
 {
 private:
@@ -166,7 +141,6 @@ private:
 
         if (isTrack)
         {
-            string roman = track.number.to!string;
             double fontSize = radius * 0.20;
             if (fontSize < 5) 
                 fontSize = 5;
@@ -175,12 +149,12 @@ private:
             cr.setFontSize(fontSize);
 
             TextExtents ext;
-            cr.textExtents(roman, ext);
+            cr.textExtents(track.number.to!string, ext);
             double ty = -radius * 0.68;
             double tx = -ext.width / 2 - ext.xBearing;
 
             cr.moveTo(tx, ty);
-            cr.textPath(roman);
+            cr.textPath(track.number.to!string);
             cr.clip();
 
             cr.setSourceRgba(0.72, 0.72, 0.72, 0.85);
