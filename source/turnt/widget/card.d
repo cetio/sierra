@@ -22,8 +22,15 @@ public:
     Label subLabel;
     Label playCountLabel;
 
-    this(Vinyl v, string title, string detail, int plays = 0,
-        int mTop = 2, int mBot = 2, string extraTitleCss = "")
+    this(
+        Vinyl vinyl, 
+        string title, 
+        string detail, 
+        int plays = 0,
+        int mTop = 2, 
+        int mBot = 2, 
+        string extraTitleCss = ""
+    )
     {
         super(Orientation.Horizontal, 0);
         addCssClass("card");
@@ -32,12 +39,12 @@ public:
         marginTop = mTop;
         marginBottom = mBot;
 
-        this.vinyl = v;
-        v.outlined = false;
+        this.vinyl = vinyl;
+        vinyl.outlined = false;
 
         row = new Box(Orientation.Horizontal, 8);
-        v.detach();
-        row.append(v);
+        vinyl.detach();
+        row.append(vinyl);
 
         infoBox = new Box(Orientation.Vertical, 1);
         infoBox.valign = Align.Center;

@@ -11,12 +11,10 @@ import mutagen.format.flac;
 import mutagen.format.mp3;
 import mutagen.format.mp4;
 
-enum AudioFormat
+bool isAudio(string path)
 {
-    Unknown,
-    Flac,
-    MP3,
-    MP4
+    string ext = extension(path);
+    return ext == ".flac" || ext == ".mp3" || ext == ".m4a" || ext == ".mp4" || ext == ".aac";
 }
 
 struct Audio
@@ -51,40 +49,26 @@ struct Audio
     string[] opIndex(string str) const
     {
         if (data.type == typeid(FLAC))
-        {
-            const(FLAC) flac = data.get!FLAC;
-            return flac[str];
-        }
-        if (data.type == typeid(MP3))
-        {
-            const(MP3) mp3 = data.get!MP3;
-            return mp3[str];
-        }
-        if (data.type == typeid(MP4))
-        {
-            const(MP4) mp4 = data.get!MP4;
-            return mp4[str];
-        }
+            return data.get!FLAC[str];
+        else if (data.type == typeid(MP3))
+            return data.get!MP3[str];
+        else if (data.type == typeid(MP4))
+            return data.get!MP4[str];
+
         return null;
     }
 
+    // TODO: Should use `string[]` and update the appropriate format data (ie: size) to ensure proper write.
+    // TODO: Add `flush()` to write changes to file.
     string opIndexAssign(string val, string tag)
     {
         if (data.type == typeid(FLAC))
-        {
-            FLAC flac = data.get!FLAC;
-            return flac[tag] = val;
-        }
+            return data.get!FLAC[tag] = val;
         else if (data.type == typeid(MP3))
-        {
-            MP3 mp3 = data.get!MP3;
-            return mp3[tag] = val;
-        }
+            return data.get!MP3[tag] = val;
         else if (data.type == typeid(MP4))
-        {
-            MP4 mp4 = data.get!MP4;
-            return mp4[tag] = val;
-        }
+            return data.get!MP4[tag] = val;
+
         return val;
     }
 

@@ -18,7 +18,7 @@ public:
     string name;
     string dir;
     Track[] tracks;
-    Artist artist;
+    Artist[] artists;
 
     Image image()
         => tracks.length > 0 ? tracks[0].image : Image.init;
@@ -35,8 +35,8 @@ public:
     {
         Album ret = new Album();
         ret.dir = path;
-        ret.name = baseName(path);
-        ret.artist = artist;
+        if (artist !is null)
+            ret.artists ~= artist;
 
         if (!exists(path) || !isDir(path))
             return ret;
@@ -45,43 +45,31 @@ public:
         {
             foreach (entry; dirEntries(path, SpanMode.shallow))
             {
-                if (!entry.isFile)
-                    continue;
-
-                string ext = extension(entry.name).toLower();
-                if (!isAudioExt(ext))
+                if (!entry.isFile || !entry.name.isAudio)
                     continue;
 
                 Track track = Track.fromFile(entry.name, ret);
-                if (track.audio.data.hasValue)
+                if (!track.audio.data.hasValue)
+                    continue;
+                
+                ret.tracks ~= track;
+                
+                if (ret.name is null)
                 {
-                    ret.tracks ~= track;
-                    
-                    if (ret.name == baseName(path))
-                    {
-                        string[] albumTags = track.audio["ALBUM"];
-                        if (albumTags.length > 0)
-                            ret.name = albumTags[0];
-                    }
+                    string[] albumTags = track.audio["ALBUM"];
+                    if (albumTags.length > 0)
+                        ret.name = albumTags[0];
                 }
             }
         }
         catch (Exception) { }
 
+        // Fallback to path name if no album tags were found
+        if (ret.name is null)
+            ret.name = baseName(path);
+
         ret.tracks.sort!((a, b) => a.number < b.number ||
             (a.number == b.number && a.audio.file.name < b.audio.file.name));
         return ret;
-    }
-
-private:
-    static bool isAudioExt(string ext)
-    {
-        switch (ext)
-        {
-        case ".flac", ".mp3", ".m4a", ".mp4", ".m4b", ".m4p", ".opus", ".ogg":
-            return true;
-        default:
-            return false;
-        }
     }
 }

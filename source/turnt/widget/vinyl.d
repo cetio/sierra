@@ -1,8 +1,8 @@
 module turnt.widget.vinyl;
 
 import std.conv;
-import std.math : abs, cos, fmin, fmod, sin, PI;
-import std.variant;;
+import std.math;
+import std.variant;
 
 import cairo.context;
 import cairo.global;
@@ -71,8 +71,6 @@ Surface pixbufToSurface(Pixbuf pb)
 class Vinyl : DrawingArea
 {
 private:
-    uint hoverGen;
-
     void drawDisc(Context cr, double cx, double cy, double radius, double angle = 0.0)
     {
         cr.save();
@@ -195,42 +193,9 @@ private:
         }
     }
 
-    void onEnter(double x, double y)
-    {
-        uint gen = ++hoverGen;
-        timeoutAdd(0, 200, delegate bool() {
-            if (hoverGen == gen)
-            {
-                hovered = true;
-                queueDraw();
-            }
-            return false;
-        });
-    }
-
-    void onLeave()
-    {
-        hoverGen++;
-        hovered = false;
-        queueDraw();
-    }
-
-    void loadLabel(Image img, int size)
-    {
-        if (!img.hasData)
-            return;
-
-        try
-        {
-            
-        }
-        catch (Exception) { }
-    }
-
 public:
     Variant data;
     string name;
-    bool hovered;
     bool outlined;
     
     int size;
@@ -289,11 +254,6 @@ public:
                 }
             }
         }
-
-        EventControllerMotion motion = new EventControllerMotion();
-        motion.connectEnter(&onEnter);
-        motion.connectLeave(&onLeave);
-        addController(motion);
     }
 
     void detach()

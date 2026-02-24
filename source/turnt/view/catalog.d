@@ -119,7 +119,7 @@ public:
             Artist fresh = Artist.fromDirectory(artist.dir);
             artist.albums = fresh.albums;
             foreach (album; artist.albums)
-                album.artist = artist;
+                album.artists ~= artist;
         }
 
         Vinyl artistVinyl = new Vinyl(artist);

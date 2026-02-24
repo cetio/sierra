@@ -39,6 +39,7 @@ public:
             {
                 if (!entry.isDir)
                     continue;
+                
                 Album album = Album.fromDirectory(entry.name, ret);
                 if (album.tracks.length > 0)
                     ret.albums ~= album;

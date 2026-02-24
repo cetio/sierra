@@ -21,22 +21,26 @@ public:
     this(Audio audio)
     {
         this.audio = audio;
+        string[] title = audio["TITLE"];
+        if (title.length > 0)
+            this.name = title[0];
 
-        string[] titles = audio["TITLE"];
-        this.name = titles.length > 0 ? titles[0] : null;
-
-        string str = audio["TRACKNUMBER"].length > 0 ? audio["TRACKNUMBER"][0] : null;
-        if (str !is null)
+        string[] trackNum = audio["TRACKNUMBER"];
+        if (trackNum.length > 0)
         {
+            string str = trackNum[0];
             ptrdiff_t slash = str.indexOf('/');
             if (slash > 0)
                 str = str[0..slash];
+            
+            str = str.strip();
+            if (str.length > 0)
+            {
+                try
+                    this.number = str.to!int;
+                catch (Exception) { }
+            }
         }
-
-        try
-            this.number = str !is null ? str.strip().to!int : 0;
-        catch (Exception)
-            this.number = 0;
     }
 
     static Track fromFile(string path, Album album = null)
@@ -79,16 +83,15 @@ public:
         if (!audio.data.hasValue)
             return 0;
 
-        string str;
-        if (audio["PLAY_COUNT"].length > 0)
-            str = audio["PLAY_COUNT"][0];
-        else if (audio["PCNT"].length > 0)
-            str = audio["PCNT"][0];
-        else
+        string[] tags = audio["PLAY_COUNT"];
+        if (tags is null)
+            tags = audio["PCNT"];
+        
+        if (tags is null || tags.length == 0)
             return 0;
 
         try
-            return str.strip().to!int;
+            return tags[0].strip().to!int;
         catch (Exception)
             return 0;
     }
@@ -98,11 +101,11 @@ public:
         if (!audio.data.hasValue)
             return false;
 
-        string[] pcnt = audio["PCNT"];
-        if (pcnt.length > 0)
-            audio["PCNT"] = count.to!string;
+        string str = count.to!string;
+        if (audio["PCNT"] != null)
+            audio["PCNT"] = str;
         else
-            audio["PLAY_COUNT"] = count.to!string;
+            audio["PLAY_COUNT"] = str;
         return true;
     }
 }
