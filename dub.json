@@ -3,11 +3,10 @@
 		"cet"
 	],
 	"copyright": "Copyright © 2025, cet",
-	"description": "GTK turntable music player.",
+	"description": "Audio metadata parsing library supporting FLAC, MP3, and MP4 formats.",
 	"license": "AGPL-3.0-only",
-	"name": "turnt",
+	"name": "mutagen",
+	"targetType": "library",
 	"dependencies": {
-		"gid:gtk4": "0.9.8",
-		"gid:gst1": "0.9.8"
 	}
 }

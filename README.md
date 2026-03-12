@@ -1,26 +1,55 @@
-# Turnt
+# Mutagen
 
-Turnt is a GTK music player built around a vinyl record centric design.
-It focuses on simplicity and a semi-neuomorphic UI for local music libraries.
+Mutagen is an audio metadata parsing library for D supporting FLAC, MP3, and MP4 formats. It provides a clean, unified interface for reading and writing audio file metadata, including tags, images, and playback statistics.
 
 ## Features
 
-Among Turnt's features are:
+- **Multi-format support**: FLAC, MP3, M4A, MP4, AAC
+- **Unified interface**: Simple `Track` class that handles all formats
+- **Metadata access**: Read/write tags via array indexing
+- **Image extraction**: Extract embedded album artwork
+- **Playback statistics**: Track play counts and usage data
+- **Catalog types**: `Track`, `Album`, `Artist`, and `Image` classes
 
-- **Turntable-first playback UI** with a vinyl-focused layout.
-- **Local music library browsing** with fast navigation.
-- **Simple queue control** focused on “play what you picked” workflows.
-- **GTK 4 UI** with a semi-neuomorphic aesthetic.
+## Quick Start
+
+```d
+import mutagen;
+import std.stdio;
+
+void main()
+{
+    // Load a track from file
+    Track track = Track.fromFile("music.flac");
+    
+    // Read metadata
+    writeln("Title: ", track.name);
+    writeln("Artist: ", track["ARTIST"]);
+    writeln("Album: ", track["ALBUM"]);
+    
+    // Write metadata
+    track["GENRE"] = "Electronic";
+    
+    // Extract album art
+    Image cover = track.image();
+    if (cover.hasData()) {
+        writeln("Album art available: ", cover.type);
+    }
+}
+```
 
 ## Architecture
 
-- `turnt.window` - Main application window and high-level UI composition.
-- `turnt.queue` - Playback queue management and control flow.
-- `turnt.player` - GStreamer-backed audio playback.
-- `turnt.library` - Local library scanning and indexing.
-- `turnt.views` - Primary UI views (turntable, browse, queue).
+- `mutagen.track` - Core audio type with format dispatch
+- `mutagen.album` - Album grouping and metadata
+- `mutagen.artist` - Artist information and collections
+- `mutagen.image` - Image handling and type detection
+- `mutagen.format` - Format-specific parsers (FLAC, MP3, MP4)
+
+## Dependencies
+
+Mutagen has no external dependencies - it's pure D.
 
 ## License
 
-Turnt is licensed under the [AGPL-3.0 license](LICENSE.txt).
-
+Mutagen is licensed under the [AGPL-3.0 license](LICENSE.txt).
